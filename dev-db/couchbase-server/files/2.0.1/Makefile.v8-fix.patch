@@ -1,0 +1,20 @@
+--- Makefile	2013-03-22 21:16:44.000000000 +0200
++++ Makefile.new	2013-08-19 21:09:13.950309687 +0300
+@@ -1,6 +1,7 @@
+ # -*- Mode: makefile -*-
+ TOPDIR := $(shell pwd)
+-PREFIX := $(TOPDIR)/install
++#PREFIX := $(TOPDIR)/install
++PREFIX := /opt/couchbase
+ 
+ COMPONENTS := $(COMPONENTS_EXTRA) \
+         bucket_engine \
+@@ -212,7 +213,7 @@
+ 	cp -r geocouch/share/www/script/test/* $(DESTDIR)$(PREFIX)/share/couchdb/www/script/test
+ 
+ ifdef PLEASE_BUILD_COUCH_DEPS
+-couchdb_OPTIONS := --with-v8-lib=$(PREFIX)/lib --with-v8-include=$(PREFIX)/include "PATH=$(PREFIX)/bin:$(PATH)"
++couchdb_OPTIONS := --with-v8-lib=$(PREFIX)/lib --with-v8-include=$(PREFIX)/include CXXFLAGS="-DV8_USE_UNSAFE_HANDLES=1" "PATH=$(PREFIX)/bin:$(PATH)"
+ 
+ # it's necessary to pass this late. couchdb is using libtool and
+ # libtool portably understands -rpath (NOTE: _single_ dash). Passing
