@@ -30,6 +30,12 @@ DEPEND=""
 pkg_setup() {
 	enewuser couchbase -1 -1 /opt/couchbase daemon
 	enewgroup couchbase
+
+	ewarn "This package provides only a port from binary .deb package 
+built by 
+Couchbase for another linux distributions."
+        ewarn "It's not properly tested on this distribution and may have some bugs."
+        ewarn "Use it with caution on production systems! Stablity of true Enterprise edition is not guaranteed!."
 }
 
 src_unpack() {
