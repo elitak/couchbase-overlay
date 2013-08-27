@@ -12,12 +12,14 @@ KEYWORDS="~x86 ~amd64"
 IUSE=""
 
 RDEPEND=">=sys-libs/ncurses-5
+	 >=app-arch/snappy-1
 	 >=sys-devel/automake-1.10.3
 	 >=sys-devel/autoconf-2.13
 	 >=dev-libs/libevent-2.0.0
 	 >=dev-libs/cyrus-sasl-2
 	 >=dev-libs/openssl-0.9.8x
-	 >=dev-lang/erlang-15.2.3.1
+	 >=dev-lang/erlang-15[smp,kpoll]
+	 <dev-lang/erlang-16
 	 >=dev-lang/v8-3.13.7
 	 <dev-lang/v8-3.19.0"
 	 
