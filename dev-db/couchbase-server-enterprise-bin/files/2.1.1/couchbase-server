@@ -135,7 +135,6 @@ start() {
         +c \
         +S 16:16 \
         -smp enable \
-        +sbt u \
         -kernel inet_dist_listen_min 21100 inet_dist_listen_max 21299 \
                 error_logger false \
         -sasl sasl_error_logger false \
@@ -145,7 +144,7 @@ start() {
         -setcookie nocookie \
         -run ns_babysitter_bootstrap -- \
         -couch_ini $couch_start_arguments \
-        -ns_babysitter cookiefile "\"$COOKIEFILE\"" \
+        -ns_babysitter cookiefile "\"/opt/couchbase/var/lib/couchbase/couchbase-server.cookie\"" \
         -ns_server config_path "\"/opt/couchbase/etc/couchbase/static_config\"" \
         -ns_server pidfile "\"/opt/couchbase/var/lib/couchbase/couchbase-server.pid\"" \
         -ns_server nodefile "\"/opt/couchbase/var/lib/couchbase/couchbase-server.node\"" \
