@@ -2,7 +2,7 @@ EAPI=5
 inherit eutils
 
 DESCRIPTION="Distributed key-value database management system"
-HOMEPAGE="htts://www.couchbase.com"
+HOMEPAGE="https://www.couchbase.com"
 
 SLOT="0"
 PROVIDE="dev-db/couchbase"
@@ -23,7 +23,7 @@ RDEPEND=">=sys-libs/ncurses-5
 	 <dev-lang/v8-3.19.0
 	 >=dev-lang/erlang-15[smp,kpoll]
 	 <dev-lang/erlang-16"
-	 
+
 DEPEND=""
 S="${WORKDIR}/${PN}_src"
 
@@ -38,6 +38,7 @@ pkg_setup() {
 
 src_prepare() {
 	epatch "${FILESDIR}/${PV}/Makefile.v8-fix.patch"
+	epatch "${FILESDIR}/${PV}/healthchecker.Makefile.missing_cheetah_reports.patch"
 }
 
 src_configure() {
@@ -46,20 +47,20 @@ src_configure() {
 
 src_install() {
 	cp -pPR "${WORKDIR}/${PN}_src/install" "${D}"
-	rm -f "${D}"/opt/couchbase/${PV}/data        
+	rm -f "${D}"/opt/couchbase/${PV}/data
 	rm -f "${D}"/opt/couchbase/${PV}/tmp
-	
-	sed -i "s/\/opt\/couchbase\/var\/lib\/couchbase\/couchbase-server.pid/\/var\/run\/couchbase-server.pid/" "${D}/opt/couchbase/bin/couchbase-server" || die "Install failed!"
-	
+
+	sed -i "s/\/var\/lib\/couchbase\/couchbase-server.pid/\/var\/run\/couchbase-server.pid/" "${D}/install/bin/couchbase-server" || die "Install failed!"
+
 	dodir "/opt/couchbase/var/lib/couchbase/data"
 	keepdir "/opt/couchbase/var/lib/couchbase/data"
-	
+
 	dodir "/opt/couchbase/var/lib/couchbase/tmp"
 	dodir "/opt/couchbase/var/lib/couchbase/logs"
 	dodir "/opt/couchbase/var/lib/couchbase/mnesia"
-	
+
 	chown -R couchbase:daemon "${D}/opt/couchbase" || die "Install failed!"
-	
+
 	newinitd "${FILESDIR}/${PV}/couchbase-server" couchbase-server
 }
 
