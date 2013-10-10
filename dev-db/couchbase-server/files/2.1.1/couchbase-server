@@ -15,24 +15,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-PATH="/opt/couchbase/bin":$PATH
-export PATH
-
-ERL_LIBS="/opt/couchbase/lib/ns_server/erlang/lib:/opt/couchbase/lib/couchdb/erlang/lib:/opt/couchbase/lib/couchdb/plugins"
+ERL_LIBS="$(echo /usr/lib/{ns_server,couchdb}/erlang/lib | tr " " ":"):/usr/lib/couchdb/plugins"
 export ERL_LIBS
 COUCHBASE_USER="couchbase"
-COUCHBASE_PATH=/opt/couchbase
-DEFAULT_CONFIG_DIR="/opt/couchbase/etc/couchdb/default.d"
-DEFAULT_CONFIG_FILE="/opt/couchbase/etc/couchdb/default.ini"
-LOCAL_CONFIG_DIR="/opt/couchbase/etc/couchdb/local.d"
-LOCAL_CONFIG_FILE="/opt/couchbase/etc/couchdb/local.ini"
+DEFAULT_CONFIG_DIR="/etc/couchdb/default.d"
+DEFAULT_CONFIG_FILE="/etc/couchdb/default.ini"
+LOCAL_CONFIG_DIR="/etc/couchdb/local.d"
+LOCAL_CONFIG_FILE="/etc/couchdb/local.ini"
 
-PIDFILE="/var/run/couchbase-server.pid"
-COOKIEFILE="/opt/couchbase/var/lib/couchbase/couchbase-server.cookie"
+PIDFILE="/run/couchbase-server.pid"
+# TODO is this needed/used? -nocookie opt may render this moot
+COOKIEFILE="/run/couchbase-server.cookie"
 
 couch_start_arguments=""
 
-LD_LIBRARY_PATH="/opt/couchbase/lib":"/opt/couchbase/lib/memcached":$LD_LIBRARY_PATH
+LD_LIBRARY_PATH="/usr/lib/memcached":$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH
 
 ERL_CRASH_DUMP=erl_crash.dump.$(date +%m-%d-%Y-%H:%M:%S).$$
@@ -69,7 +66,7 @@ EOF
 }
 
 _prepare_datadir () {
-    datadir="/opt/couchbase/var/lib/couchbase"
+    datadir="/var/lib/couchbase"
 
     test -d "$datadir" || mkdir -p "$datadir"
     cd "$datadir"
@@ -128,14 +125,18 @@ start() {
 
     umask 007
 
-    start-stop-daemon --start -m --pidfile ${PIDFILE} --background \
-    --chdir $COUCHBASE_PATH/bin -u "$COUCHBASE_USER" --name beam \
+    start-stop-daemon \
+    --start \
+    --background \
+    --user ${COUCHBASE_USER} \
+    --name beam \
     --exec erl -- \
         +A 16 \
         +c \
         +S 16:16 \
         -smp enable \
-        -kernel inet_dist_listen_min 21100 inet_dist_listen_max 21299 \
+        -kernel inet_dist_listen_min 21100 \
+                inet_dist_listen_max 21299 \
                 error_logger false \
         -sasl sasl_error_logger false \
         -hidden \
@@ -143,19 +144,20 @@ start() {
         -name 'babysitter_of_ns_1@127.0.0.1' \
         -setcookie nocookie \
         -run ns_babysitter_bootstrap -- \
-        -couch_ini $couch_start_arguments \
-        -ns_babysitter cookiefile "\"/opt/couchbase/var/lib/couchbase/couchbase-server.cookie\"" \
-        -ns_server config_path "\"/opt/couchbase/etc/couchbase/static_config\"" \
-        -ns_server pidfile "\"/opt/couchbase/var/lib/couchbase/couchbase-server.pid\"" \
-        -ns_server nodefile "\"/opt/couchbase/var/lib/couchbase/couchbase-server.node\"" \
-        -ns_server enable_mlockall ${COUCHBASE_ENABLE_MLOCKALL:-true} \
-        -ns_server cookiefile "\"/opt/couchbase/var/lib/couchbase/couchbase-server.cookie\"" 2>&1 > /dev/null
+            -couch_ini $couch_start_arguments \
+            -ns_babysitter cookiefile "\"${COOKIEFILE}\"" \
+            -ns_server pidfile "\"${PIDFILE}\"" \
+            -ns_server config_path "\"/etc/couchbase/static_config\"" \
+            -ns_server nodefile "\"/var/lib/couchbase/couchbase-server.node\"" \
+            -ns_server enable_mlockall ${COUCHBASE_ENABLE_MLOCKALL:-true} \
+            -ns_server cookiefile "\"${COOKIEFILE}\"" \
+    2>&1 > /dev/null
 }
 
 stop() {
     ebegin "Stopping couchbase server"
     start-stop-daemon --stop --pidfile ${PIDFILE} --name beam
-    rm "$COOKIEFILE"
+    rm -f ${COOKIEFILE}
     rm -f ${PIDFILE}
     epmd -kill >/dev/null
 }
