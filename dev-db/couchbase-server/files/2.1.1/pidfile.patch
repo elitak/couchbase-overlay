@@ -1,0 +1,11 @@
+--- ns_server/couchbase-server.sh.in	2013-07-29 13:21:26.000000000 -0700
++++ ns_server/couchbase-server.sh.in.new	2013-10-09 16:10:21.257655140 -0700
+@@ -26,7 +26,7 @@
+ LOCAL_CONFIG_DIR="@PREFIX@/etc/couchdb/local.d"
+ LOCAL_CONFIG_FILE="@PREFIX@/etc/couchdb/local.ini"
+ 
+-PIDFILE="@PREFIX@/var/lib/couchbase/couchbase-server.pid"
++PIDFILE="@PREFIX@/run/couchbase-server.pid"
+ COOKIEFILE="@PREFIX@/var/lib/couchbase/couchbase-server.cookie"
+ 
+ couch_start_arguments=""
