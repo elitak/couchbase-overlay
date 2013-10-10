@@ -1,6 +1,6 @@
 EAPI=5
 
-DESCRIPTION="${PN#couchbase-} from couchbase"
+DESCRIPTION="${PN} from couchbase"
 HOMEPAGE="https://www.couchbase.com"
 
 SLOT="0"
@@ -12,16 +12,9 @@ KEYWORDS="~x86 ~amd64"
 IUSE=""
 
 # FIXME
-RDEPEND="
-	 >=dev-lang/v8-3.13.7
-	 <dev-lang/v8-3.19.0
-	 >=dev-lang/erlang-15[smp,kpoll]
-	 <dev-lang/erlang-16
-"
+RDEPEND=""
 DEPEND="${RDEPEND}"
-S="${WORKDIR}/${SPN}_src/${PN#couchbase-}"
-
-# FIXME dont install /etc/init.d/couchdb
+S="${WORKDIR}/${SPN}_src/${PN#lib}"
 
 pkg_postinst() {
 	elog "For fresh ebuilds check https://github.com/elitak/couchbase-overlay"

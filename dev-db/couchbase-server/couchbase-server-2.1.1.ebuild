@@ -5,8 +5,7 @@ DESCRIPTION="${PN} (main erlang lib) from couchbase"
 HOMEPAGE="https://www.couchbase.com"
 
 SLOT="0"
-SPN=couchbase-server
-SRC_URI="http://packages.couchbase.com/releases/${PV}/${SPN}_src-${PV}.tar.gz"
+SRC_URI="http://packages.couchbase.com/releases/${PV}/${PN}_src-${PV}.tar.gz"
 LICENSE="COUCHBASE INC. COMMUNITY EDITION"
 KEYWORDS="~x86 ~amd64"
 IUSE=""
@@ -15,11 +14,12 @@ IUSE=""
 RDEPEND="
 	=dev-db/couchbase-couchdb-2.1.1
 	=dev-db/geocouch-2.1.1
+	=dev-db/portsigar-2.1.1
 	>=dev-lang/erlang-15[smp,kpoll]
 	<dev-lang/erlang-16
 "
 DEPEND="${RDEPEND}"
-S="${WORKDIR}/${SPN}_src/${PN}"
+S="${WORKDIR}/${PN}_src/ns_server"
 
 # TODO: is this necessary??? in which ebuild(s)?
 pkg_setup() {
@@ -36,6 +36,7 @@ pkg_setup() {
 src_prepare() {
    epatch ${FILESDIR}/${PV}/Makefile_paths.patch
    epatch ${FILESDIR}/${PV}/couchbase-server.sh.in.patch
+   epatch ${FILESDIR}/${PV}/static_config.in.patch
 }
 
 src_configure() {

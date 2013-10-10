@@ -1,11 +1,10 @@
 --- Makefile	2013-10-10 04:39:26.612615508 -0700
 +++ Makefile.new	2013-10-10 04:41:10.671307313 -0700
-@@ -83,9 +83,9 @@
+@@ -83,9 +83,8 @@
  
  NS_SERVER_LIBDIR := $(DESTDIR)$(PREFIX)/lib/ns_server/erlang/lib/ns_server
  
 -PREFIX_FOR_CONFIG ?= $(PREFIX)
-+PREFIX_FOR_CONFIG ?= ""
  
 -COUCHBASE_DB_DIR ?= $(PREFIX)/var/lib/couchbase/data
 +COUCHBASE_DB_DIR ?= /var/lib/couchbase/data

@@ -1,27 +1,21 @@
 EAPI=5
 
-DESCRIPTION="${PN#couchbase-} from couchbase"
+DESCRIPTION="${PN} from couchbase"
 HOMEPAGE="https://www.couchbase.com"
 
 SLOT="0"
 SPN=couchbase-server
-SPV=2.1.1
-SRC_URI="http://packages.couchbase.com/releases/${SPV}/${SPN}_src-${SPV}.tar.gz"
+SRC_URI="http://packages.couchbase.com/releases/${PV}/${SPN}_src-${PV}.tar.gz"
 LICENSE="COUCHBASE INC. COMMUNITY EDITION"
 KEYWORDS="~x86 ~amd64"
 IUSE=""
 
 # FIXME
 RDEPEND="
-	 >=dev-lang/v8-3.13.7
-	 <dev-lang/v8-3.19.0
-	 >=dev-lang/erlang-15[smp,kpoll]
-	 <dev-lang/erlang-16
+	=dev-libs/libsigar-1.6.2
 "
 DEPEND="${RDEPEND}"
-S="${WORKDIR}/${SPN}_src/${PN#couchbase-}"
-
-# FIXME dont install /etc/init.d/couchdb
+S="${WORKDIR}/${SPN}_src/${PN}"
 
 pkg_postinst() {
 	elog "For fresh ebuilds check https://github.com/elitak/couchbase-overlay"
