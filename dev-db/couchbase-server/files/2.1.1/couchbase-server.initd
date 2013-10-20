@@ -65,13 +65,6 @@ EOF
     fi
 }
 
-_prepare_datadir () {
-    datadir="/var/lib/couchbase"
-
-    test -d "$datadir" || mkdir -p "$datadir"
-    cd "$datadir"
-}
-
 _maybe_start_epmd () {
     # Initialize distributed erlang on the system (i.e. epmd)
     erl -noshell -setcookie nocookie -sname init -run init stop 2>&1 > /dev/null
@@ -107,7 +100,6 @@ _load_config () {
 start() {
     ebegin "Starting couchbase server"
     _check_nofile
-    _prepare_datadir
     _maybe_start_epmd
     _load_config
 
@@ -120,6 +112,9 @@ start() {
     GLIBCXX_FORCE_NEW=1
     export GLIBCXX_FORCE_NEW
 
+    # XXX I think this is necessary because start-stop-daemon doesn't handle
+    # the file's creation, ns_server does, and it needs the correct perms to
+    # write to it.
     touch $PIDFILE
     chown $COUCHBASE_USER:daemon $PIDFILE
 

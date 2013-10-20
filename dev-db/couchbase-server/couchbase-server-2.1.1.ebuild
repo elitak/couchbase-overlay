@@ -21,16 +21,17 @@ RDEPEND="
 DEPEND="${RDEPEND}"
 S="${WORKDIR}/${PN}_src/ns_server"
 
-# TODO: is this necessary??? in which ebuild(s)?
+user=couchbase
+group=daemon
+
 pkg_setup() {
-	#dodir /opt/couchbase
-	#keepdir /opt/couchbase
-	enewuser couchbase -1 -1 /var/lib/couchbase daemon
-	enewgroup couchbase
+	enewuser $user -1 -1 /var/lib/couchbase daemon
+	#enewgroup $group
+
 	# reread docs about sandbox and remove this
-	ewarn "You must start emerge with FEATURES=\"-sandbox\" to make it work!!!"
+	#ewarn "You must start emerge with FEATURES=\"-sandbox\" to make it work!!!"
 	# whats j1?
-	ewarn "If emerge fails also try reemerge with MAKEOPTS=\"-j1\" before writing bug report."
+	#ewarn "If emerge fails also try reemerge with MAKEOPTS=\"-j1\" before writing bug report."
 }
 
 src_prepare() {
@@ -54,19 +55,16 @@ src_configure() {
 
 src_install() {
 	emake DESTDIR="${D}" install
+	fowners $user:$group /var/lib/couchbase
 
-   # TODO XXX
-   # these fix perms(? no) and preserve db files
-	dodir "/var/lib/couchbase/data"
-	keepdir "/var/lib/couchbase/data"
+	# These are necessary since neither the initscript nor the erlang procs
+	# create them.
+	dodir /var/log/couchbase
+	fowners $user:$group /var/log/couchbase
+	dodir /var/tmp/couchbase
+	fowners $user:$group /var/tmp/couchbase
 
-	dodir "/var/lib/couchbase/tmp"
-	dodir "/var/lib/couchbase/logs"
-	dodir "/var/lib/couchbase/mnesia"
-
-	chown -R couchbase:daemon "${D}/var/lib/couchbase" || die "Install failed!"
-
-	newinitd "${FILESDIR}/${PV}/couchbase-server" couchbase-server
+	newinitd "${FILESDIR}/${PV}/couchbase-server.initd" couchbase-server
 }
 
 pkg_postinst() {
